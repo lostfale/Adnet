@@ -58,7 +58,9 @@ namespace adnet
         }
 
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
+
     }
+
     
 
 }

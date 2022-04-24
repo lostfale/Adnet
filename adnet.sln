@@ -5,11 +5,6 @@ VisualStudioVersion = 17.0.32112.339
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "adnet", "adnet\adnet.csproj", "{92EAB1D5-1192-40B1-A4AD-5FAF1F7648CA}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ENT", "ENT", "{C869D655-69E7-4F17-BF41-29DE6BD3822B}"
-	ProjectSection(SolutionItems) = preProject
-		Connect.cs = Connect.cs
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{DD9B92C3-9D2B-4E67-9D96-A2B33D696C8A}"
 EndProject
 Global

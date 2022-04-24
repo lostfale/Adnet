@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using adnet;
 
-static void adonet()
+static void adonet1()
 {
     Console.WriteLine("AdoNetDEmo");
     var connection = new SqlConnection(@"Server = WIN-ODHAFDQSSPK; Database = Players; Trusted_Connection = True;");
@@ -26,7 +26,118 @@ static void adonet()
     connection.Close();
 
 }
-adonet();
+static void adonet2()
+{
+    Console.WriteLine("список игроков, отсортированных по названию своей команды, далее по цене контракта.");
+    var connection = new SqlConnection(@"Server = WIN-ODHAFDQSSPK; Database = Players; Trusted_Connection = True;");
+    connection.Open();
+    var command = connection.CreateCommand();
+    command.CommandText = "Select p.Id,p.Name,p.Price , t.Name_Team from Players p  inner join Team t on   p.TeamID=t.Id order by Name_Team,Price";
+    using var reader = command.ExecuteReader();
+    while (reader.Read())
+    {
+        Console.WriteLine($"Id={reader.GetInt32(reader.GetOrdinal("Id"))} - Name={reader.GetString(reader.GetOrdinal("Name"))} - Price={reader.GetDecimal(reader.GetOrdinal("Price"))} - Name_Team={reader.GetString(reader.GetOrdinal("Name_Team"))}");
+
+    }
+    reader.Close();
+    connection.Close();
+
+}
+adonet2();
+
+static void adonet3()
+{
+    Console.WriteLine("список игроков, отсортированных по успешности своего контракта ");
+    var connection = new SqlConnection(@"Server = WIN-ODHAFDQSSPK; Database = Players; Trusted_Connection = True;");
+    connection.Open();
+    var command = connection.CreateCommand();
+    command.CommandText = "Select p.Id,p.Name,p.Price,p.Age   from Players p inner join Team t on TeamID=t.Id order by Price/(Age-18)";
+    using var reader = command.ExecuteReader();
+    while (reader.Read())
+    {
+        Console.WriteLine($"Id={reader.GetInt32(reader.GetOrdinal("Id"))} - Name={reader.GetString(reader.GetOrdinal("Name"))} - Price={reader.GetDecimal(reader.GetOrdinal("Price"))} - Age={reader.GetInt32(reader.GetOrdinal("Age"))} ");
+
+    }
+    reader.Close();
+    connection.Close();
+
+}
+adonet3();
+static void adonet4()
+{
+    Console.WriteLine("список игроков с контрактом ниже среднего по базе  ");
+    var connection = new SqlConnection(@"Server = WIN-ODHAFDQSSPK; Database = Players; Trusted_Connection = True;");
+    connection.Open();
+    var command = connection.CreateCommand();
+    command.CommandText = "Select *from Players p Where Price<(Select AVG(Price) as d from Players)";
+    using var reader = command.ExecuteReader();
+    while (reader.Read())
+    {
+        Console.WriteLine($"Id={reader.GetInt32(reader.GetOrdinal("Id"))} - Name={reader.GetString(reader.GetOrdinal("Name"))} - Price={reader.GetDecimal(reader.GetOrdinal("Price"))}  ");
+
+    }
+    reader.Close();
+    connection.Close();
+
+}
+adonet4();
+
+static void adonet5()
+{
+    Console.WriteLine("удалить игрока с минимальной стоимостью контракта  ");
+    var connection = new SqlConnection(@"Server = WIN-ODHAFDQSSPK; Database = Players; Trusted_Connection = True;");
+    connection.Open();
+    var command = connection.CreateCommand();
+    command.CommandText = "Delete from Players  Where  Price in (Select MIn(Price)  from Players)";
+    using var reader = command.ExecuteReader();
+    while (reader.Read())
+    {
+        Console.WriteLine($"Id={reader.GetInt32(reader.GetOrdinal("Id"))} - Name={reader.GetString(reader.GetOrdinal("Name"))} - Price={reader.GetDecimal(reader.GetOrdinal("Price"))}  ");
+
+    }
+    reader.Close();
+    connection.Close();
+
+}
+static void adonet6()
+{
+    Console.WriteLine("уценить контракт с максимальным знaчением ");
+    var connection = new SqlConnection(@"Server = WIN-ODHAFDQSSPK; Database = Players; Trusted_Connection = True;");
+    connection.Open();
+    var command = connection.CreateCommand();
+    command.CommandText = "Update  Players set Players.Price=Price-(Price*0.1) from Players p where p.Price in (Select Max(Price)from Players)";
+    using var reader = command.ExecuteReader();
+    while (reader.Read())
+    {
+        Console.WriteLine($"Id={reader.GetInt32(reader.GetOrdinal("Id"))} - Name={reader.GetString(reader.GetOrdinal("Name"))} - Price={reader.GetDecimal(reader.GetOrdinal("Price"))}  ");
+
+    }
+    reader.Close();
+    connection.Close();
+
+}
+adonet6();
+adonet2();
+static void adonet7()
+{
+    Console.WriteLine("Вывести пары: {команда, средний возраст игрока}, использовать группировку (GroupBy, Average)");
+    var connection = new SqlConnection(@"Server = WIN-ODHAFDQSSPK; Database = Players; Trusted_Connection = True;");
+    connection.Open();
+    var command = connection.CreateCommand();
+    command.CommandText = "Select Name_Team,Avg(Age) as AverageAge from  Players p  inner join Team t on   p.TeamID=t.Id group by Name_Team;";
+    using var reader = command.ExecuteReader();
+    while (reader.Read())
+    {
+        Console.WriteLine($"NameTeam={reader.GetString(reader.GetOrdinal("Name_Team"))} - Age={reader.GetInt32(reader.GetOrdinal("AverageAge"))}  ");
+
+    }
+    reader.Close();
+    connection.Close();
+
+}
+adonet7();
+
+
 
 
 int i = 1;
@@ -39,7 +150,10 @@ while (i > 0)
         Console.WriteLine("\t4 - Контракт ниже срежнего по базе ");
         Console.WriteLine("\t5 - Извлечь игрока с максимальной стоимостью контракта, уценить контракт на 10%.");
         Console.WriteLine("\t6 - Удаление игрока с минимальной стоимостью контракта");
-        switch (Console.ReadLine())
+    Console.WriteLine("\t7 -Сортировка по контракту и команде ");
+    Console.WriteLine("\t8 -Groupby ");
+
+    switch (Console.ReadLine())
         {
             case "1":
                 PrintFull();
@@ -59,11 +173,18 @@ while (i > 0)
             case "6":
                 MinPricePerson();
                 break;
+        case "7":
+            SortOrder();
+            break;
+        case "8":
+            adonet7();
+                break;
 
 
 
 
-        }
+
+    }
     }
 
     static void PrintFull() 
@@ -80,6 +201,26 @@ while (i > 0)
     }
 }
 
+
+void SortOrder() 
+{
+    adnet.PlayersContext db = new PlayersContext();
+    var players = db.Players.OrderBy(x => x.Price).OrderBy(x => x.TeamId)
+        .Join(db.Teams, x => x.TeamId, t => t.Id,
+        (x, t) => new
+        {
+            Id = x.Id,
+            Name = x.Name,
+            Price=x.Price,
+            Age = x.Age,
+            Team = t.NameTeam
+        });
+    foreach (var x in players)
+    {
+        Console.WriteLine("{0}.{1} - {2}-{3}-{4}", x.Id, x.Name, x.Price,x.Age,x.Team);
+    }
+
+}
 
 
 
@@ -184,6 +325,15 @@ void MinPricePerson ()//удаление с мин стоимостью
     PrintFull();
 
 }
+//void group()
+//{
+//    adnet.PlayersContext db = new PlayersContext();
+
+    
+
+//}
+
+
 
 //MinPricePerson();
 
